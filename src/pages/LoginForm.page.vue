@@ -10,7 +10,7 @@
             <n-form-item label="Mot de passe">
               <n-input v-model="loginForm.password" type="password" placeholder="Entrez votre mot de passe" required />
             </n-form-item>
-            <n-button type="success" block @click="login">Se connecter</n-button>
+            <n-button type="success" block html-type="submit">Se connecter</n-button>
           </n-form>
           <p class="redirect-text">
             Pas de compte ?
@@ -29,7 +29,7 @@
             <n-form-item label="Confirmer le mot de passe">
               <n-input v-model="registerForm.confirmPassword" type="password" placeholder="Confirmez votre mot de passe" required />
             </n-form-item>
-            <n-button type="success" block @click="register">S'inscrire</n-button>
+            <n-button type="success" block html-type="submit">S'inscrire</n-button>
           </n-form>
           <p class="redirect-text">
             Déjà inscrit ?
@@ -53,8 +53,10 @@ const loginForm = ref({ email: "", password: "" });
 const registerForm = ref({ email: "", password: "", confirmPassword: "" });
 
 const login = async () => {
+  console.log("Tentative de connexion...");
   try {
     const response = await axios.post("https://pokemon-api-seyrinian-production.up.railway.app/auth/login", loginForm.value);
+    console.log("Réponse API :", response.data);
     localStorage.setItem("token", response.data.token);
     localStorage.setItem("userId", response.data.user.id);
     router.push("/deckbuilder");
@@ -64,12 +66,14 @@ const login = async () => {
 };
 
 const register = async () => {
+  console.log("Tentative d'inscription...");
   if (registerForm.value.password !== registerForm.value.confirmPassword) {
     console.error("Les mots de passe ne correspondent pas");
     return;
   }
   try {
-    await axios.post("https://pokemon-api-seyrinian-production.up.railway.app/auth/register", registerForm.value);
+    const response = await axios.post("https://pokemon-api-seyrinian-production.up.railway.app/auth/register", registerForm.value);
+    console.log("Réponse API :", response.data);
     activeTab.value = "login"; // Redirige vers connexion après inscription
   } catch (error) {
     console.error("Erreur d'inscription :", error);
